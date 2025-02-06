@@ -10,11 +10,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -44,5 +43,16 @@ public class UserResources {
         User user = userService.findById(id);
         UserDTO userDTO = new UserDTO(user.getId(), user.getName(), user.getEmail());
         return ResponseEntity.status(HttpStatus.OK).body(userDTO);
+    }
+
+    @PostMapping("/insert")
+    @Operation(summary = "Insert an user", description = "Insert one user in the system")
+    @ApiResponse(responseCode = "201", description = "User created with successful.")
+    @ApiResponse(responseCode = "400", description = "User already exists", content = @Content(schema = @Schema(implementation = StandardError.class)))
+    public ResponseEntity<Void> insert(@RequestBody UserDTO userDTO) {
+        User user = userService.insert(userService.fromDTO(userDTO));
+
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{id}").buildAndExpand(user.getId()).toUri();
+        return ResponseEntity.created(uri).build();
     }
 }
