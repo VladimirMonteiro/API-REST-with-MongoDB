@@ -55,4 +55,13 @@ public class UserResources {
         URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{id}").buildAndExpand(user.getId()).toUri();
         return ResponseEntity.created(uri).build();
     }
+
+    @DeleteMapping("/delete/{id}")
+    @Operation(summary = "Delete by id", description = "Delete a user using id")
+    @ApiResponse(responseCode = "200", description = "User deleted with successful")
+    @ApiResponse(responseCode = "404", description = "User not found", content = @Content(schema = @Schema(implementation = StandardError.class)))
+    public ResponseEntity<Void> delete(@PathVariable("id") String id) {
+        userService.delete(id);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
 }
