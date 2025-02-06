@@ -64,4 +64,15 @@ public class UserResources {
         userService.delete(id);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+
+    @PutMapping("/update/{id}")
+    @Operation(summary = "Update by id", description = "Update a user using id")
+    @ApiResponse(responseCode = "200", description = "User deleted with successful")
+    @ApiResponse(responseCode = "404", description = "User not found", content = @Content(schema = @Schema(implementation = StandardError.class)))
+    public ResponseEntity<Void> update(@RequestBody UserDTO userDTO, @PathVariable("id") String id) {
+        User obj = userService.fromDTO(userDTO);
+        obj.setId(id);
+        userService.update(obj);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
 }

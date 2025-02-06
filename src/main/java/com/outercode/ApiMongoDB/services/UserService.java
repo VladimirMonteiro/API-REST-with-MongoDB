@@ -45,4 +45,15 @@ public class UserService {
     public User fromDTO(UserDTO obj) {
         return new User(obj.id(), obj.name(), obj.email());
     }
+
+    public User update(User obj) {
+        User newObj = this.findById(obj.getId());
+        updatedData(newObj, obj);
+        return userRepository.save(newObj);
+    }
+
+    private void updatedData(User newObj, User obj) {
+        newObj.setName(obj.getName());
+        newObj.setEmail(obj.getEmail());
+    }
 }
