@@ -1,5 +1,6 @@
 package com.outercode.ApiMongoDB.resources;
 
+import com.outercode.ApiMongoDB.domain.Post;
 import com.outercode.ApiMongoDB.domain.User;
 import com.outercode.ApiMongoDB.dto.UserDTO;
 import com.outercode.ApiMongoDB.resources.exceptions.StandardError;
@@ -74,5 +75,12 @@ public class UserResources {
         obj.setId(id);
         userService.update(obj);
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @GetMapping("/{id}/posts")
+    @Operation(summary = "Find posts", description = "Return all posts of user using id")
+    public ResponseEntity<List<Post>> findPosts(@PathVariable("id") String id) {
+        User obj = userService.findById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(obj.getPosts());
     }
 }
