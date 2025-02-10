@@ -24,9 +24,8 @@ public class UserService {
     }
 
     public User findById(String id) {
-        User user = userRepository.findById(id)
+        return userRepository.findById(id)
                 .orElseThrow(()-> new ObjectNotFoundException("User not found."));
-        return user;
     }
 
     public User insert(User obj) {
