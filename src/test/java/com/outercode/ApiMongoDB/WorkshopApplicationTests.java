@@ -8,6 +8,7 @@ class WorkshopApplicationTests {
 
 	@Test
 	void contextLoads() {
+		WorkshopApplication.main(new String[] {});
 	}
 
 }
