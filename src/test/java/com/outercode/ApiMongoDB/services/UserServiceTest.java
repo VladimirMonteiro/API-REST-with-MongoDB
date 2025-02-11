@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.context.SpringBootTest;
 
 
 import java.util.List;
@@ -111,15 +112,56 @@ class UserServiceTest {
     }
 
     @Test
-    void delete() {
+    void shouldBeDeleteUser() {
+        doNothing().when(userRepository).deleteById(anyString());
+        when(userRepository.findById(anyString())).thenReturn(optionalUser);
+
+        userService.delete(ID);
+        verify(userRepository, times(1)).findById(ID);
+        verify(userRepository, times(1)).deleteById(ID);
     }
 
     @Test
-    void fromDTO() {
+    void shouldBeReturnObjectNotFoundExceptionIfUserNotFound() {
+        when(userRepository.findById(anyString())).thenThrow(new ObjectNotFoundException("User not found."));
+
+        try {
+
+            userService.delete(ID);
+
+        } catch (Exception e) {
+            verify(userRepository, times(1)).findById(ID);
+            assertEquals(ObjectNotFoundException.class, e.getClass());
+            assertEquals("User not found.", e.getMessage());
+
+        }
     }
 
     @Test
-    void update() {
+    void shouldBeReturnOneInstanceOfUser() {
+
+        User response = userService.fromDTO(userDTO);
+        assertNotNull(response);
+
+        assertEquals(response.getClass(), User.class);
+        assertEquals(response.getName(), NAME);
+        assertEquals(ID, response.getId());
+        assertEquals(EMAIL, response.getEmail());
+    }
+
+    @Test
+    void shouldBeUpdateUser() {
+        when(userRepository.save((User) any())).thenReturn(user);
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+        User response = userService.update(user);
+
+        verify(userRepository, times(1)).findById(user.getId());
+        verify(userRepository, times(1)).save(user);
+        assertNotNull(response);
+        assertEquals(User.class, response.getClass());
+        assertEquals(NAME, response.getName());
+        assertEquals(ID, response.getId());
+        assertEquals(EMAIL, response.getEmail());
     }
 
     private void startUser() {
